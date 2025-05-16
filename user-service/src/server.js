@@ -29,6 +29,9 @@ app.post("/users", (req, res) => {
   users.push(newUser);
   res.status(201).json(newUser);
 });
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 app.listen(PORT, () => {
   console.log(`User service running on port ${PORT}`);

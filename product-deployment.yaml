@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: product-service:latest
-          imagePullPolicy: Never
+          image: docker.io/checo10/product-service:latest
           ports:
             - containerPort: 3002
 ---
@@ -24,6 +23,7 @@ kind: Service
 metadata:
   name: product-service
 spec:
+  type: NodePort
   selector:
     app: product-service
   ports:
