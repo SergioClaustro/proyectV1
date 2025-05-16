@@ -30,7 +30,7 @@ app.post("/users", (req, res) => {
   res.status(201).json(newUser);
 });
 app.get("/health", (req, res) => {
-  res.status(500).send("Failing health check intentionally");
+  res.status(200).send("OK");
 });
 
 app.listen(PORT, () => {
