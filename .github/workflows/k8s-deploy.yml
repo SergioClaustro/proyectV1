@@ -1,0 +1,29 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Minikube
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > $HOME/.kube/config
+
+      - name: Deploy user-service
+        run: kubectl apply -f user-deployment.yaml
+
+      - name: Deploy product-service
+        run: kubectl apply -f product-deployment.yaml
+
+      - name: Deploy order-service
+        run: kubectl apply -f order-deployment.yaml
