@@ -1,106 +1,116 @@
-# Microservices App con Docker
+# 🚀 Proyecto de Microservicios - Despliegue en Kubernetes con Istio y Skaffold
 
-Este proyecto es una aplicación basada en **microservicios** usando **Docker** y **Node.js**. Contiene tres servicios:
+Este proyecto está basado en una arquitectura de microservicios utilizando Docker, Kubernetes, Istio y GitHub Actions para CI/CD. A continuación se describen los pasos necesarios para desplegar localmente este sistema en tu entorno usando Minikube.
 
-- `user-service` – Maneja usuarios
-- `product-service` – Maneja productos
-- `order-service` – Crea órdenes entre usuarios y productos
+Requisitos Previos
+Asegúrate de tener instalados los siguientes componentes:
 
-Cada servicio es independiente, pero se comunican entre sí mediante una red compartida en Docker.
-
----
-
-## 🚀 Tecnologías
-
-- Node.js
-- Express.js
 - Docker
-- Docker Compose
+- Kubectl
+- Minikube
+- Skaffold
+- Istioctl
 
 ---
 
-## 🧱 Estructura del Proyecto
+## 🚀 Guía de Despliegue Local
 
-```
-microservices-app/
-│
-├── user-service/
-│   ├── src/server.js
-│   ├── package.json
-│   └── Dockerfile
-│
-├── product-service/
-│   ├── src/server.js
-│   ├── package.json
-│   └── Dockerfile
-│
-├── order-service/
-│   ├── src/server.js
-│   ├── package.json
-│   └── Dockerfile
-│
-└── docker-compose.yml
-```
+Sigue los pasos a continuación para desplegar este proyecto en tu entorno local usando Minikube.
 
 ---
 
-## ⚙️ Cómo levantar los servicios
-
-1. Clona el repositorio:
-
-   ```bash
-   git clone https://github.com/SergioClaustro/microservices-app.git
-   cd microservices-app
-   ```
-
-2. Construye y levanta los contenedores:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-3. Verifica que los servicios estén corriendo:
-   - `http://localhost:3001/users/`
-   - `http://localhost:3002/products`
-   - `POST http://localhost:3003/orders` (con `userId` y `productId`)
-
----
-
-## 📬 Ejemplo de orden
-
-POST a `http://localhost:3003/orders` con JSON:
-
-```json
-{
-  "userId": 1,
-  "productId": 2
-}
-```
-
-Respuesta:
-
-```json
-{
-  "message": "Order created",
-  "order": {
-    "id": 2,
-    "userId": 1,
-    "productId": 2
-  }
-}
-```
-
----
-
-## 📝 Notas
-
-- Los datos están almacenados en memoria (no persistentes)
-- No es necesario tener una base de datos para esta versión
-
----
-
-## 🧼 Para detener los servicios
+### 1. Clonar el Repositorio
 
 ```bash
-docker-compose down
+git clone https://github.com/SergioClaustro/proyectV1.git
+cd proyectV1
 ```
+
+---
+
+### 2. Iniciar Minikube
+
+```bash
+minikube start --driver=docker
+```
+
+---
+
+### 3. Instalar Istio e Inyectar Sidecar
+
+```bash
+istioctl install --set profile=demo -y
+kubectl label namespace istio-system istio-injection=enabled
+```
+
+---
+
+### 4. Ejecutar Skaffold
+
+```bash
+skaffold dev
+```
+
+Este comando:
+
+- Construye las imágenes Docker
+- Aplica los manifiestos de Kubernetes
+- Despliega los servicios
+- Monitorea cambios en el código para recarga automática
+
+---
+
+### 5. Acceder a los Servicios
+
+Para acceder a `user-service`:
+
+```bash
+minikube service user-service
+```
+
+También puedes hacer esto para `product-service` y `order-service`.
+
+---
+
+### 6. Autenticación y Seguridad
+
+- Algunas rutas como `/profile` requieren un token JWT generado al hacer login.
+- La ruta `/health` es pública y se usa en los probes de Kubernetes.
+
+---
+
+### 7. Consola de Kiali (Monitoreo)
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/istio/istio/release-1.20/samples/addons/kiali.yaml
+kubectl port-forward svc/kiali -n istio-system 20001:20001
+```
+
+Luego abre tu navegador en:
+
+```
+http://localhost:20001
+```
+
+**Usuario:** `admin`  
+**Contraseña:** `admin`
+
+---
+
+### 8. Pruebas de Resiliencia
+
+- Si eliminas un pod, Kubernetes lo recreará automáticamente.
+- Se implementaron `readiness` y `liveness` probes en cada microservicio.
+- Se configuró un `HorizontalPodAutoscaler` para escalar según uso de CPU.
+
+---
+
+### 9. CI/CD con GitHub Actions
+
+Cada vez que haces `git push`, se activa un pipeline que:
+
+- Construye imágenes Docker
+- Las sube a Docker Hub
+- Despliega cambios automáticamente con Skaffold
+
+---
