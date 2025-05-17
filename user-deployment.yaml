@@ -17,6 +17,11 @@ spec:
           image: docker.io/checo10/user-service:latest
           ports:
             - containerPort: 3001
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "200m"
           livenessProbe:
             httpGet:
               path: /health

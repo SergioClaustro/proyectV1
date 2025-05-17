@@ -1,8 +1,16 @@
 const express = require("express");
 const app = express();
 const PORT = 3001;
+const { expressjwt: jwtMiddleware } = require("express-jwt");
 
 app.use(express.json());
+
+// Middleware para proteger todas las rutas excepto /health
+app.use(
+  jwtMiddleware({ secret: "secret_key", algorithms: ["HS256"] }).unless({
+    path: ["/health"],
+  })
+);
 
 let users = [
   { id: 1, name: "Carolina" },
@@ -31,6 +39,10 @@ app.post("/users", (req, res) => {
 });
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
+});
+
+app.get("/profile", (req, res) => {
+  res.json({ message: `Hola ${req.auth.user}, accediste al perfil privado.` });
 });
 
 app.listen(PORT, () => {
