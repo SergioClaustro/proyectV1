@@ -1,4 +1,4 @@
-# Proyecto de Microservicios
+# Proyecto de Microservicio
 
 Este proyecto está basado en una arquitectura de microservicios utilizando Docker, Kubernetes, Istio y GitHub Actions para CI/CD. A continuación se describen los pasos necesarios para desplegar localmente este sistema en tu entorno usando Minikube.
 
