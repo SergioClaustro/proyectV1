@@ -32,10 +32,16 @@ app.post("/products", (req, res) => {
 });
 
 app.get("/check-user/:id", async (req, res) => {
+  const token = req.headers.authorization;
   try {
     const userId = req.params.id;
     const response = await axios.get(
-      `http://user-service:3001/users/${userId}`
+      `http://user-service:3001/users/${userId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
     );
     res.json({ exists: true, user: response.data });
   } catch (error) {
