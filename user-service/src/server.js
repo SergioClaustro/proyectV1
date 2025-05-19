@@ -38,7 +38,7 @@ app.post("/users", (req, res) => {
   res.status(201).json(newUser);
 });
 app.get("/health", (req, res) => {
-  res.status(500).send("Error");
+  res.status(200).send("Ok");
 });
 
 app.get("/profile", (req, res) => {
