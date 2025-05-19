@@ -18,11 +18,16 @@ app.get("/orders", (req, res) => {
 });
 
 app.post("/orders", async (req, res) => {
+  const token = req.headers.authorization;
   const { userId, productId } = req.body;
 
   try {
     //Verificar que exista el usuario
-    const userRes = await axios(`http://user-service:3001/users/${userId}`);
+    const userRes = await axios(`http://user-service:3001/users/${userId}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
     //Verificar que exista el producto
     const productRes = await axios(
       `http://product-service:3002/products/${productId}`
