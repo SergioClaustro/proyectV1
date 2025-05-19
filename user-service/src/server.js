@@ -6,11 +6,11 @@ const { expressjwt: jwtMiddleware } = require("express-jwt");
 app.use(express.json());
 
 // Middleware para proteger todas las rutas excepto /health
-app.use(
-  jwtMiddleware({ secret: "secret_key", algorithms: ["HS256"] }).unless({
-    path: ["/health"],
-  })
-);
+// app.use(
+//   jwtMiddleware({ secret: "secret_key", algorithms: ["HS256"] }).unless({
+//     path: ["/health"],
+//   })
+// );
 
 let users = [
   { id: 1, name: "Carolina" },
